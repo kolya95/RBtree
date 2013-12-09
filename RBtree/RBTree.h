@@ -20,20 +20,24 @@ struct rb_node_t
 class rb_tree
 {
 private:
-
-public:
     rb_node_t* root_;
+public:
+
     rb_tree() { root_ = 0; }
 
-    rb_node_t* rb_new_node(rb_key_t key);
+    rb_node_t* rb_new_node(rb_key_t key);      // создает новый с красным цветом
 
-    rb_node_t* rb_search_node(rb_node_t* root,rb_key_t key);
+    rb_node_t* rb_search_node(rb_key_t key); // ищет по ключу
 
-    rb_node_t* rb_rotate_left(rb_node_t* root,rb_node_t* x);
-    rb_node_t* rb_rotate_right(rb_node_t* root,rb_node_t* y);
+    void rb_rotate_left(rb_node_t* x); // правый поворот
+    void rb_rotate_right(rb_node_t* y); // левый поворот
 
-    rb_node_t* rb_insert(rb_node_t* root,rb_key_t key);
-    rb_node_t* rb_insert_fixup(rb_node_t* root,rb_node_t* x);
+    void rb_insert(rb_key_t key); //вставка
+    void rb_insert_fixup(rb_node_t* x);//восстановление балансировки
+
+
+    void rb_delete(rb_key_t key);//удаление
+    void rb_delete_fixup(rb_node_t* x);// восстанвление балансировки
 
     rb_node_t* rb_tree_successor(rb_node_t* x);
     rb_node_t* rb_tree_minimum(rb_node_t* x);
@@ -44,7 +48,5 @@ public:
     void preorder_tree_walk(rb_node_t* root);
     void postorder_tree_walk(rb_node_t* root);
 
-    rb_node_t* rb_delete(rb_node_t* root,rb_key_t key);
-    rb_node_t* rb_delete_fixup(rb_node_t* root,rb_node_t* x);
 };
 #endif

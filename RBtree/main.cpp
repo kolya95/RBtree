@@ -16,7 +16,7 @@ int main()
         cin>>key;
 
         cout<<i<<" insert key "<<key;
-        a.root_ = a.rb_insert(a.root_,key);
+        a.rb_insert(key);
     }
 
     /*cout<<"Tree height: "<<rb_tree_height(root)<<endl;
@@ -31,7 +31,7 @@ int main()
         cin>>key;
 
         cout<<i<<" delete key "<<key;
-        a.root_=a.rb_delete(a.root_,key);
+        a.rb_delete(key);
     }
 
     return 0;

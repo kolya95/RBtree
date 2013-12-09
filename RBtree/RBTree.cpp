@@ -20,15 +20,15 @@ rb_node_t* rb_tree::rb_new_node(rb_key_t key)
     return node;
 }
 
-rb_node_t* rb_tree::rb_search_node(rb_node_t* root,rb_key_t key)
+rb_node_t* rb_tree::rb_search_node(rb_key_t key)
 {
-	if (root==PNIL)
+    if (root_ == PNIL)
 	{
 		return PNIL;
 	} 
 	else
 	{
-		rb_node_t* x=root;
+        rb_node_t* x = root_;
 
 		while (x!=PNIL)
 		{
@@ -49,7 +49,7 @@ rb_node_t* rb_tree::rb_search_node(rb_node_t* root,rb_key_t key)
 	return PNIL;
 }
 
-rb_node_t* rb_tree::rb_rotate_left(rb_node_t* root,rb_node_t* x)
+void rb_tree::rb_rotate_left(rb_node_t* x)
 {
     rb_node_t* y = x->right;
 	x->right=y->left;
@@ -63,7 +63,7 @@ rb_node_t* rb_tree::rb_rotate_left(rb_node_t* root,rb_node_t* x)
 
 	if (x->parent ==PNIL)
 	{
-		root=y;
+        root_ = y;
 	} 
 	else if(x==x->parent->left)
 	{
@@ -75,26 +75,24 @@ rb_node_t* rb_tree::rb_rotate_left(rb_node_t* root,rb_node_t* x)
 	}
 
 	y->left=x;
-	x->parent=y;
-
-	return root;
+    x->parent=y;
 }
 
-rb_node_t* rb_tree::rb_rotate_right(rb_node_t* root,rb_node_t* y)
+void rb_tree::rb_rotate_right(rb_node_t* y)
 {
-	rb_node_t* x = y->left;
-	y->left=x->right;
+    rb_node_t* x = y->left;
+    y->left=x->right;
 
-	if (x->right != PNIL)
+    if (x->right != PNIL)
 	{
-		x->right->parent =y;
+        x->right->parent = y;
 	}
 
-	x->parent=y->parent;
+    x->parent = y->parent;
 
-	if (y->parent ==PNIL)
+    if (y->parent == PNIL)
 	{
-		root=x;
+        root_ = x;
 	} 
 	else if(y==y->parent->left)
 	{
@@ -105,129 +103,131 @@ rb_node_t* rb_tree::rb_rotate_right(rb_node_t* root,rb_node_t* y)
 		y->parent->right = x;
 	}
 
-	x->right=y;
-	y->parent=x;
+    x->right = y;
+    y->parent = x;
 
-	return root;
 }
 
-rb_node_t* rb_tree::rb_insert(rb_node_t* root,rb_key_t key)
+void rb_tree::rb_insert(rb_key_t key)
 {
-	rb_node_t* z=rb_new_node(key);
+    rb_node_t* z = rb_new_node(key);
 
-	if (root==NULL || root==PNIL)
+    if (root_ ==NULL || root_ ==PNIL)
 	{
-		root=z;
-		root->color=BLACK;
+        root_ = z;
+        root_->color = BLACK;
 
 		cout<<" success!"<<endl;
-		return root;
-	} 
+        return;
+    }
 	else
 	{
-		rb_node_t* y=PNIL;
-		rb_node_t* x=root;
+        rb_node_t* y = PNIL;
+        rb_node_t* x = root_;
 		while (x!=PNIL)
 		{
-			y=x;
+            y = x;
 			if (z->key<x->key)
 			{
-				x=x->left;
+                x = x->left;
 			} 
 			else if(z->key>x->key)
 			{
-				x=x->right;
+                x = x->right;
 			}
 			else
 			{
                 cout<<" repeated, ignore!"<<endl;
-				return root;
+                return;
 			}
 		}
 
-		z->parent=y;
+        z->parent = y;
 
 		if (y==PNIL)
 		{
-			root=z;
+            root_ = z;
 		} 
 		else if(z->key<y->key)
 		{
-			y->left=z;
+            y->left = z;
 		}
 		else
 		{
-			y->right=z;
+            y->right = z;
 		}
 
-        return rb_insert_fixup(root,z);
+        rb_insert_fixup(z);
+        return;
 	}
 }
 
-rb_node_t* rb_tree::rb_insert_fixup(rb_node_t* root,rb_node_t* z)
+void rb_tree::rb_insert_fixup(rb_node_t* z)
 {
-	rb_node_t* y=PNIL;
+    rb_node_t* y = PNIL;
 
-	while (z->parent!=PNIL && z->parent->color==RED)
+    while (z->parent != PNIL && z->parent->color == RED)
 	{
         if (z->parent==z->parent->parent->left)
 		{
-	        y=z->parent->parent->right;		
-            if (y->color==RED)//case1
+            y = z->parent->parent->right;
+            if (y->color == RED)//case1
 			{
-				z->parent->color=BLACK;
-				y->color=BLACK;
-				z->parent->parent->color=RED;
+                z->parent->color = BLACK;
+                y->color = BLACK;
+                z->parent->parent->color = RED;
 
-				z=z->parent->parent;
+                z = z->parent->parent;
 			} 
 			else 
 			{
-                if (z==z->parent->right)//case2
+                if (z == z->parent->right)//case2
 				{
-					z=z->parent;
-                    root=rb_rotate_left(root,z);
+                    z = z->parent;
+                    rb_rotate_left(z);
 				} 
-                z->parent->color=BLACK;//case3
-				z->parent->parent->color=RED;
-                root=rb_rotate_right(root,z->parent->parent);
+                z->parent->color = BLACK;//case3
+                z->parent->parent->color = RED;
+                rb_rotate_right(z->parent->parent);
+
 			}
 		} 
         else
 		{
-			y=z->parent->parent->left;		
-            if (y->color==RED)//case4
+            y = z->parent->parent->left;
+            if (y->color == RED)//case4
 			{
-				z->parent->color=BLACK;
-				y->color=BLACK;
+                z->parent->color = BLACK;
+                y->color = BLACK;
 				z->parent->parent->color=RED;
 
-                z=z->parent->parent;
+                z = z->parent->parent;
 			} 
 			else 
 			{
-                if (z==z->parent->left)//case5
+                if (z == z->parent->left)//case5
 				{
-					z=z->parent;
-                    root=rb_rotate_right(root,z);
-				} 
-                z->parent->color=BLACK;//case6
-				z->parent->parent->color=RED;
-                root=rb_rotate_left(root,z->parent->parent);
+                    z = z->parent;
+                    rb_rotate_right(z);
+                }
+                z->parent->color = BLACK;//case6
+                z->parent->parent->color = RED;
+                rb_rotate_left(z->parent->parent);
+
 			}
 		}
 	}
-	root->color=BLACK;
+    root_->color = BLACK;
 
 	cout<<" success!"<<endl;
-	return root;
+    return;
 }
 
 rb_node_t* rb_tree::rb_tree_minimum(rb_node_t* x)
 {
     while (x->left != PNIL)
     {
-		x=x->left;
+        x = x->left;
     }
     return x;
 }
@@ -241,10 +241,10 @@ rb_node_t* rb_tree::rb_tree_successor(rb_node_t* x)
     else
     {
 		rb_node_t* y=x->parent;
-		while (y!=PNIL && x==y->right)
+        while (y != PNIL && x == y->right)
 		{
-			x=y;
-			y=y->parent;
+            x = y;
+            y = y->parent;
 		}
 		return y;
     }
@@ -254,14 +254,14 @@ int rb_tree::rb_tree_height(rb_node_t* root)
 {
 	int left_height,right_height;
 
-    if (root==NULL || root==PNIL)
+    if (root == NULL || root == PNIL)
     {
 	    return 0;
     }
 	else
 	{
-        left_height=rb_tree_height(root->left);
-        right_height=rb_tree_height(root->right);
+        left_height = rb_tree_height(root->left);
+        right_height = rb_tree_height(root->right);
 
         return (left_height>right_height?(left_height+1):(right_height+1));
 	}
@@ -269,7 +269,7 @@ int rb_tree::rb_tree_height(rb_node_t* root)
 
 void rb_tree::inorder_tree_walk(rb_node_t* root)
 {
-    rb_node_t* x=root;
+    rb_node_t* x = root;
 	if (x!=PNIL)
 	{
 		inorder_tree_walk(x->left);
@@ -280,7 +280,7 @@ void rb_tree::inorder_tree_walk(rb_node_t* root)
 
 void rb_tree::preorder_tree_walk(rb_node_t* root)
 {
-    rb_node_t* x=root;
+    rb_node_t* x = root;
 	if (x!=PNIL)
 	{
 		cout<<x->key<<" "<<x->color<<endl;
@@ -291,7 +291,7 @@ void rb_tree::preorder_tree_walk(rb_node_t* root)
 
 void rb_tree::postorder_tree_walk(rb_node_t* root)
 {
-    rb_node_t* x=root;
+    rb_node_t* x = root;
 	if (x!=PNIL)
 	{	
 		postorder_tree_walk(x->left);
@@ -300,151 +300,152 @@ void rb_tree::postorder_tree_walk(rb_node_t* root)
 	}
 }
 
-rb_node_t* rb_tree::rb_delete(rb_node_t* root,rb_key_t key)
+void rb_tree::rb_delete(rb_key_t key)
 {
-     rb_node_t* z=rb_search_node(root,key);
+     rb_node_t* z=rb_search_node(key);
 
-	 if (z==PNIL)
+     if (z == PNIL)
 	 {
 		 cout<<" doesn't exist!"<<endl;
 	 } 
 	 else
 	 {
-         rb_node_t* y=PNIL;
-         rb_node_t* x=PNIL;
+         rb_node_t* y = PNIL;
+         rb_node_t* x = PNIL;
 
-	     if (z->left ==PNIL || z->right ==PNIL)
+         if (z->left == PNIL || z->right == PNIL)
 	     {
 			 y =z;
 	     } 
 	     else
 	     {
-			 y=rb_tree_successor(z);
+             y = rb_tree_successor(z);
 	     }
 
 		 if (y->left != PNIL)
 		 {
-			 x=y->left;
+             x = y->left;
 		 } 
 		 else
 		 {
-			 x=y->right;
+             x = y->right;
 		 }
 
-	     x->parent=y->parent;
+         x->parent = y->parent;
 
-		 if (y->parent==PNIL)
+         if (y->parent == PNIL)
 		 {
-			 root = x;
+             root_ = x;
 		 } 
 		 else if (y == y->parent->left)
 		 {
-			 y->parent->left=x;
+             y->parent->left = x;
 		 }
 		 else
 		 {
-			 y->parent->right=x;
+             y->parent->right = x;
 		 }
 
 		 if (y!=z)
 		 {
-			 z->key=y->key;
+             z->key = y->key;
 		 }
 
-		 if (y->color==BLACK)
+         if (y->color == BLACK)
 		 { 
-             root=rb_delete_fixup(root,x);
+             rb_delete_fixup(x);
 		 }
 
 		 delete y;
 		 cout<<" success!"<<endl;
 	}
-	return root;
+    return;
 }
 
-rb_node_t* rb_tree::rb_delete_fixup(rb_node_t* root,rb_node_t* x)
+void rb_tree::rb_delete_fixup(rb_node_t* x)
 {
-	rb_node_t* uncle=PNIL;
-	if (x->color==RED)
-	{
-        x->color=BLACK;
+    rb_node_t* uncle = PNIL;
+    if (x->color == RED)
+    {
+        x->color = BLACK;
 	} 
 	else
 	{
-		while (x->color==BLACK && x!=root)
+        while (x->color == BLACK && x != root_)
 			{
-				if (x==x->parent->left)
+                if (x == x->parent->left)
 				{
-		            uncle=x->parent->right;
+                    uncle = x->parent->right;
 
                     if (uncle->color == RED)//case1
 					{
 						uncle->color = BLACK;
 						x->parent->color = RED;
-						root=rb_rotate_left(root,x->parent);
-						uncle=x->parent->right;
+                        rb_rotate_left(x->parent);
+                        uncle = x->parent->right;
 					}
 					else
 					{
-                        if (uncle->left->color==BLACK &&  uncle->right->color==BLACK)//case2
+                        if (uncle->left->color == BLACK &&  uncle->right->color == BLACK)//case2
 						{
-                            uncle->color=RED;
-							x=x->parent;
+                            uncle->color = RED;
+                            x = x->parent;
 						} 
 						else 
 						{
-                            if(uncle->right->color==BLACK)//case3
+                            if(uncle->right->color == BLACK)//case3
 							{
-								uncle->left->color=BLACK;
-								uncle->color=RED;
-								root=rb_rotate_right(root,uncle);
-								uncle=x->parent->right;
+                                uncle->left->color = BLACK;
+                                uncle->color = RED;
+                                rb_rotate_right(uncle);
+                                uncle = x->parent->right;
 							}
-                            uncle->color=x->parent->color;//case4
+                            uncle->color = x->parent->color;//case4
 							x->parent->color = BLACK;
 							uncle->right->color = BLACK;
-							root=rb_rotate_left(root,x->parent);
-							x=root;
+                            rb_rotate_left(x->parent);
+                            x = root_;
 						}
 					}
 				} 
 				else
 				{
-					uncle=x->parent->left;
+                    uncle = x->parent->left;
 
                     if (uncle->color == RED)//case5
 					{
 						uncle->color = BLACK;
 						x->parent->color = RED;
-						root=rb_rotate_right(root,x->parent);
-						uncle=x->parent->left;
+                        rb_rotate_right(x->parent);
+                        uncle = x->parent->left;
 					}
 					else
 					{
-                        if (uncle->left->color==BLACK && uncle->right->color==BLACK)//case6
+                        if (uncle->left->color == BLACK && uncle->right->color == BLACK)//case6
 						{
-                            uncle->color=RED;
-							x=x->parent;
+                            uncle->color = RED;
+                            x = x->parent;
 						} 
 						else 
 						{
-                            if(uncle->left->color==BLACK)//case7
+                            if(uncle->left->color == BLACK)//case7
 							{
-								uncle->right->color=BLACK;
-								uncle->color=RED;
-								root=rb_rotate_left(root,uncle);
-								uncle=x->parent->left;
+                                uncle->right->color = BLACK;
+                                uncle->color = RED;
+                                rb_rotate_left(uncle);
+                                uncle = x->parent->left;
 							}
-                            uncle->color=x->parent->color;//case8
+                            uncle->color = x->parent->color;//case8
 							x->parent->color = BLACK;
 							uncle->left->color = BLACK;
-							root=rb_rotate_right(root,x->parent);
-							x=root;
+                            rb_rotate_right(x->parent);
+                            x = root_;
 						}
 					}
 				}
 			}
 		}
-	root->color=BLACK;
-    return root;
+    root_->color=BLACK;
+
+    return;
 }
