@@ -117,7 +117,7 @@ void rb_tree::rb_insert(rb_key_t key)
         root_ = z;
         root_->color = BLACK;
 
-		cout<<" success!"<<endl;
+        cout<<"inserted"<<endl;
         return;
     }
 	else
@@ -137,7 +137,7 @@ void rb_tree::rb_insert(rb_key_t key)
 			}
 			else
 			{
-                cout<<" repeated, ignore!"<<endl;
+                cout<<"key repeated"<<endl;
                 return;
 			}
 		}
@@ -218,8 +218,6 @@ void rb_tree::rb_insert_fixup(rb_node_t* z)
 		}
 	}
     root_->color = BLACK;
-
-	cout<<" success!"<<endl;
     return;
 }
 
@@ -250,30 +248,13 @@ rb_node_t* rb_tree::rb_tree_successor(rb_node_t* x)
     }
 }
 
-int rb_tree::rb_tree_height(rb_node_t* root)
-{
-	int left_height,right_height;
-
-    if (root == NULL || root == PNIL)
-    {
-	    return 0;
-    }
-	else
-	{
-        left_height = rb_tree_height(root->left);
-        right_height = rb_tree_height(root->right);
-
-        return (left_height>right_height?(left_height+1):(right_height+1));
-	}
-}
-
 void rb_tree::rb_delete(rb_key_t key)
 {
      rb_node_t* z=rb_search_node(key);
 
      if (z == PNIL)
 	 {
-		 cout<<" doesn't exist!"<<endl;
+         cout<<"key doesn't exist!"<<endl;
 	 } 
 	 else
 	 {
@@ -324,7 +305,7 @@ void rb_tree::rb_delete(rb_key_t key)
 		 }
 
 		 delete y;
-		 cout<<" success!"<<endl;
+         cout<<"deleted"<<endl;
 	}
     return;
 }
@@ -421,12 +402,10 @@ void rb_tree::rb_delete_fixup(rb_node_t* x)
 
 void rb_tree::print (rb_node_t* w,int l)
 {
-  int i;
-
   if (w!=NULL&&w!=PNIL)
   {
       print (w->right,l+1);
-      for (i=1; i<=l; i++)
+      for (int i = 0; i<l; i++)
           cout<<"  ";
       cout<<w->key;
       if(w->color == BLACK)
