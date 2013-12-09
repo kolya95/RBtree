@@ -267,39 +267,6 @@ int rb_tree::rb_tree_height(rb_node_t* root)
 	}
 }
 
-void rb_tree::inorder_tree_walk(rb_node_t* root)
-{
-    rb_node_t* x = root;
-	if (x!=PNIL)
-	{
-		inorder_tree_walk(x->left);
-		cout<<x->key<<" "<<x->color<<endl;
-		inorder_tree_walk(x->right);
-	}
-}
-
-void rb_tree::preorder_tree_walk(rb_node_t* root)
-{
-    rb_node_t* x = root;
-	if (x!=PNIL)
-	{
-		cout<<x->key<<" "<<x->color<<endl;
-		preorder_tree_walk(x->left);
-		preorder_tree_walk(x->right);
-	}
-}
-
-void rb_tree::postorder_tree_walk(rb_node_t* root)
-{
-    rb_node_t* x = root;
-	if (x!=PNIL)
-	{	
-		postorder_tree_walk(x->left);
-		postorder_tree_walk(x->right);
-		cout<<x->key<<" "<<x->color<<endl;
-	}
-}
-
 void rb_tree::rb_delete(rb_key_t key)
 {
      rb_node_t* z=rb_search_node(key);
@@ -449,3 +416,24 @@ void rb_tree::rb_delete_fixup(rb_node_t* x)
 
     return;
 }
+
+
+
+void rb_tree::print (rb_node_t* w,int l)
+{
+  int i;
+
+  if (w!=NULL&&w!=PNIL)
+  {
+      print (w->right,l+1);
+      for (i=1; i<=l; i++)
+          cout<<"  ";
+      cout<<w->key;
+      if(w->color == BLACK)
+          cout<<'b'<<endl;
+      else
+          cout<<'r'<<endl;
+      print (w->left,l+1);
+  }
+}
+

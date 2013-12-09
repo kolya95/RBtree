@@ -33,6 +33,6 @@ int main()
         cout<<i<<" delete key "<<key;
         a.rb_delete(key);
     }
-
+    a.print(a.getRoot(),1);
     return 0;
 }

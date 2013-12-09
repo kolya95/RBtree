@@ -22,7 +22,7 @@ class rb_tree
 private:
     rb_node_t* root_;
 public:
-
+    inline rb_node_t* getRoot() { return root_; }
     rb_tree() { root_ = 0; }
 
     rb_node_t* rb_new_node(rb_key_t key);      // создает новый с красным цветом
@@ -40,13 +40,11 @@ public:
     void rb_delete_fixup(rb_node_t* x);// восстанвление балансировки
 
     rb_node_t* rb_tree_successor(rb_node_t* x);
-    rb_node_t* rb_tree_minimum(rb_node_t* x);
+    rb_node_t* rb_tree_minimum(rb_node_t* x); // ищет самый левый
 
     int rb_tree_height(rb_node_t* root);
 
-    void inorder_tree_walk(rb_node_t* root);
-    void preorder_tree_walk(rb_node_t* root);
-    void postorder_tree_walk(rb_node_t* root);
+    void print(rb_node_t* w,int l);
 
 };
 #endif
